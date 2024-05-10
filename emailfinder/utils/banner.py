@@ -4,7 +4,6 @@ from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit import print_formatted_text
 from pyfiglet import Figlet
 
-
 author = "@JosueEncinar"
 description = "Search emails from a domain through search engines."
 usage_example = "emailfinder -d domain.com"
