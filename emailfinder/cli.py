@@ -1,6 +1,9 @@
+import json
+import pathlib
 import sys
 import argparse
-from emailfinder.utils.banner import show_banner
+from typing import Final
+
 from emailfinder.core import processing
 from emailfinder import __version__
 
@@ -12,20 +15,23 @@ def main(argv=None):
        argv (list): The list of parameters passed.
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d','--domain', help="Domain to search",required=True)
-    parser.add_argument('-v','--version', help="Show Emailfinder version", action='version', version=__version__)
-
+    parser.add_argument('--domain', help="Domain to search", required=True)
+    # parser.add_argument('--version', help="Show Emailfinder version", action='version', version=__version__)
+    parser.add_argument('--output', help="Output-file to save result in json format. Example='data.json'")
     args = parser.parse_args()
-    show_banner()
 
-    # limit = 200
+    output: str = args.output
+    MAIN_DIR: Final[pathlib.Path] = pathlib.Path(__file__).parent
+    output_json: str = MAIN_DIR / output
 
-    try:
-        processing(args.domain)
-    except KeyboardInterrupt:
-        print("[-] EmailFinder has been interrupted. ")
+    all_data = processing(args.domain)
+    if all_data == []:
+        all_data = {
+            "Error": "Nothing found in EmailFinder"
+        }
+    with open(output_json, "w") as jf:
+        json.dump(all_data, jf, indent=2)
 
 
 if __name__ == '__main__':
     main(sys.argv[1:])
-
